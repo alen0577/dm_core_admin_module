@@ -1,0 +1,179 @@
+{% extends 'HD_base.html' %}
+{% load static %}
+{% block body %}
+
+<div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a class="text-underline-remove" href="{% url 'head_dashboard' %}">Dashboard</a></li>
+          <li class="breadcrumb-item active text-md" aria-current="page">Work Create</li>
+        </ol>
+      </nav>
+</div>
+
+<div class="row">
+
+  <div class="col-md-12 col-xl-12 grid-margin stretch-card">
+     
+          <div class="card" id="schedule-add" >
+              <div class="card-body">
+                  <h4 class="card-title">Work Tasks </h4>
+                  <form action="#" method="post" enctype="multipart/form-data">
+
+                      {% csrf_token %}
+                      
+                      <div class="row mt-4">
+                        <div class="col-sm-12 col-lg-4 col-md-12">
+                          <div class="form-group add-items">
+                            <label>Choose Client *</label>
+                            <select class="form-control text-offwhite" name="" id="#" required>
+                              <option value="">--- choose client ---</option>
+                              {% for emp in employees %}
+                              <option value=""></option>
+                              {% endfor %}
+                            </select>     
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-4 col-md-6">
+                          <div class="form-group add-items">
+                            <label>Email id *</label>
+                            <input type="email" class="form-control  text-offwhite" name=""  placeholder="enter email id" required>  
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-4 col-md-6">
+                          <div class="form-group add-items">
+                            <label>Phnone number </label>
+                            <input type="tel" class="form-control  text-offwhite" name=""  placeholder="enter phone number">  
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-4 col-md-12">
+                          <div class="form-group add-items">
+                            <label> Bussiness Name *</label>
+                            <input type="text" class="form-control  text-offwhite" name=""  placeholder="enter bussiness name" required>  
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-4 col-md-6">
+                          <div class="form-group add-items">
+                            <label>Bussiness email id *</label>
+                            <input type="email" class="form-control  text-offwhite" name=""  placeholder="enter email id" required>  
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-4 col-md-6">
+                          <div class="form-group add-items">
+                            <label>Website URL</label>
+                            <input type="url" class="form-control  text-offwhite" name=""  placeholder="enter website url">  
+                          </div>
+                        </div>
+                      </div>
+
+                      <h4 class="card-title mt-3">Pick your work dates </h4>
+                      <div class="row">
+                                     
+                        <div class="col-sm-12 col-lg-6 col-md-6">
+                          <div class="form-group add-items">
+                            <label>Start Date</label>
+                            <input type="date" class="form-control  text-offwhite" name="" required>  
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-6 col-md-6">
+                          <div class="form-group add-items">
+                            <label>Expected end date</label>
+                            <input type="date" class="form-control  text-offwhite" name="">  
+                          </div>
+                        </div>
+                      </div>
+                      <h4 class="card-title mt-3">Check Tasks for clients </h4>
+                      <div class="row" id="taskDiv">
+                        {% for task in Tasks %}
+                        <div class="col-sm-12 col-lg-3 col-md-6">
+                          <div class="form-check mb-2">
+                            <label class="form-check-label">
+                                <input type="checkbox" class="form-check-input" name="task_name" value="{{task.id}}">{{task.task_name}}
+                            </label>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                      <p class="text-muted mt-2 sm-text">*Note: if you need to add any additional task click on + </p>
+                      <div class="add-items d-flex justify-content-end ">
+                        <button class=" btn btn-outline-danger " type="button" id="add-taskBox">
+                          <span class="mdi mdi-plus mdi-18px"></span>
+                        </button> 
+                      </div>
+
+                      <!-- Adding an input filed to  add task-->
+                      <div class="add-items d-flex">
+                        <input  class="form-control text-offwhite"
+                          name="#" id="task-inputBox" style="display: none;"
+                           placeholder="enter new task..">
+                      </div>
+
+                      <div class="row mt-3">
+                        <div class="col-sm-12 col-lg-12 col-md-12">
+                          <div class="form-group add-items mt-3">
+                            <label>More about work</label>
+                            <textarea class="to-do-textarea  text-offwhite" name=""  placeholder="enter more about">  </textarea>
+                          </div>
+                        </div>
+                      </div>
+                     
+                      <div class="add-items d-flex justify-content-center ">
+                        <button class=" btn btn-outline-primary " type="submit">Create</button> 
+                      </div>
+  
+                     
+                  </form>
+                  
+              </div>
+          </div>
+      
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#add-taskBox').click(function() {
+      $('#task-inputBox').toggle();
+      $(this).find('span').toggleClass('mdi-plus mdi-minus');
+    });
+  });
+
+
+  /*  adding new coloumn to taskDiv  */
+
+  $(document).ready(function() {
+    $('#task-inputBox').on('keypress', function(event) {
+      if (event.which === 13) {  // Check if Enter key is pressed
+        event.preventDefault();  // Prevent the default form submission
+        var taskInput = $(this).val();
+        if (taskInput.trim() !== '') {
+          var newTask = `
+            <div class="col-sm-12 col-lg-3 col-md-6 task-column">
+              <div class="form-check form-check mb-2" >
+                <input type="checkbox" class="form-check-input" name="task_name" value="${taskInput}" id="task${taskInput}" >
+                <label class="form-check-label" for="task${taskInput}">
+                  ${taskInput}
+                </label>
+                <button class="btn btn-outline-danger btn-sm remove-task mt-2">
+                  -
+                </button>
+              </div>
+            </div>`;
+          $('#taskDiv').append(newTask);
+          $(this).val('');  // Clear the input after adding the task
+        }
+      }
+    });
+
+    // Remove task column when remove button is clicked
+    $('#taskDiv').on('click', '.remove-task', function() {
+      $(this).closest('.task-column').remove();
+    });
+  });
+</script>
+
+
+
+{% endblock %}
